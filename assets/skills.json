@@ -1,13 +1,13 @@
 {
-  "title": "Skill Radar",
-  "_comment": "Self-rated, 0-100. Edit these and the Charts workflow redraws the radar.",
+  "title": "Core Competencies",
+  "_comment": "Self-rated, 0-100. Evaluated competency scores.",
   "axes": [
-    { "label": "Blockchain / Web3",     "value": 88 },
-    { "label": "Stellar / Soroban",     "value": 82 },
-    { "label": "Smart Contracts",       "value": 75 },
-    { "label": "Next.js / React",       "value": 85 },
-    { "label": "TypeScript",            "value": 84 },
-    { "label": "Wallet Architecture",   "value": 80 },
-    { "label": "Digital Assets Infra",  "value": 78 }
+    { "label": "Playwright Automation",     "value": 90 },
+    { "label": "Data Engineering & SQL",    "value": 90 },
+    { "label": "LLM Evaluation & MCP",      "value": 85 },
+    { "label": "AI & Agentic Systems",      "value": 80 },
+    { "label": "Predictive & BI Analytics", "value": 80 },
+    { "label": "Pipeline & API Testing",    "value": 70 },
+    { "label": "Cloud & CI/CD Delivery",    "value": 70 }
   ]
 }

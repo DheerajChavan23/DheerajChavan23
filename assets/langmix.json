@@ -1,12 +1,12 @@
 {
-  "title": "Contract & Language Stack",
-  "_comment": "Hand-authored stack radar (was auto-pulled from GitHub language bytes). Values 0-100. Edit these and the Charts workflow redraws it.",
+  "title": "Technical Stack",
+  "_comment": "Hand-authored stack radar with exact scores. Values 0-100.",
   "axes": [
-    { "label": "Solidity",        "value": 85 },
-    { "label": "Smart Contracts", "value": 82 },
-    { "label": "Move",            "value": 72 },
-    { "label": "Rust",            "value": 74 },
-    { "label": "TypeScript",      "value": 88 },
-    { "label": "JavaScript",      "value": 80 }
+    { "label": "SQL",                         "value": 95 },
+    { "label": "Python Engineering",          "value": 90 },
+    { "label": "Playwright (TS + Python)",    "value": 90 },
+    { "label": "LangChain / LangGraph",       "value": 80 },
+    { "label": "Power BI / Tableau",          "value": 75 },
+    { "label": "Docker / Actions / AWS",      "value": 70 }
   ]
 }

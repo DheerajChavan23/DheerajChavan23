@@ -2,20 +2,20 @@
   "_comment": "Featured repos, in README order. Stars/forks/language come live from the API on every run; the description here overrides the repo's GitHub description.",
   "projects": [
     {
-      "repo": "Authorization-Checks-",
-      "description": "Checks de autorizacion que preservan privacidad (OFAC / PEP / blacklist) para pipelines KYC. La data sensible se queda local y un ZK proof ancla el resultado on-chain via Midnight."
+      "repo": "playwright_ai_framework",
+      "description": "Scalable Python & Playwright test framework using Generative AI for BDD Gherkin authoring, CI/CD quality gates, and automated test triage."
     },
     {
-      "repo": "wallet-risk-lens",
-      "description": "Herramienta Web3 ligera que puntua el riesgo de una wallet on-chain con heuristicas simples y legibles."
+      "repo": "langraphagenticai",
+      "description": "Multi-agent orchestration and workflow validation system exploring Agent-to-Agent (A2A) communication, tool execution (MCP), and hallucination checks."
     },
     {
-      "repo": "tx-whisperer",
-      "description": "Pega cualquier hash de transaccion y detecta al instante a que blockchain pertenece. Sin llamadas RPC."
+      "repo": "financial_regulatory_engine",
+      "description": "Financial regulatory ingestion and compliance evaluation engine built in Python, automating rule extraction and policy verification pipelines."
     },
     {
-      "repo": "DeepGrid",
-      "description": "Vault de market-making automatico en Sui que profundiza order books y genera yield real de trading."
+      "repo": "Credit-Risk-Prediction-and-Portfolio-Segmentation",
+      "description": "End-to-end credit risk pipeline: leakage-safe PD modeling, holdout evaluation, and risk band segmentation on 50k loans with Streamlit app."
     }
   ]
 }
