@@ -24,6 +24,7 @@ import argparse
 import datetime as dt
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -116,38 +117,79 @@ query($login:String!){
 
 
 def fetch_contributions(user: str, token: str | None):
-    """Return (total, current_streak, longest_streak) or None without a token."""
-    if not token:
-        return None
+    """Return (total, current_streak, longest_streak).
+
+    Tries GraphQL first if a token is present, then falls back to public
+    contributions calendar HTML scraping so stats render reliably even without credentials.
+    """
+    if token:
+        try:
+            data = graphql(CONTRIB_QUERY, {"login": user}, token)
+            if not data.get("errors"):
+                cal = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+                days = [(dt.date.fromisoformat(d["date"]), d["contributionCount"])
+                        for w in cal["weeks"] for d in w["contributionDays"]]
+                days.sort()
+
+                longest = run = 0
+                for _, c in days:
+                    run = run + 1 if c > 0 else 0
+                    longest = max(longest, run)
+
+                current = 0
+                for date, c in reversed(days):
+                    if c > 0:
+                        current += 1
+                    elif date != days[-1][0]:
+                        break
+                return cal["totalContributions"], current, longest
+            else:
+                print(f"  graphql contributions error: {data['errors'][0].get('message')}",
+                      file=sys.stderr)
+        except Exception as e:
+            print(f"  graphql contributions request failed ({e})", file=sys.stderr)
+
+    # Fallback to public contributions calendar scrape
     try:
-        data = graphql(CONTRIB_QUERY, {"login": user}, token)
-    except urllib.error.HTTPError as e:
-        print(f"  contributions unavailable (HTTP {e.code})", file=sys.stderr)
+        url = f"https://github.com/users/{user}/contributions"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            html = r.read().decode("utf-8")
+
+        tds = re.findall(r'data-date="(\d{4}-\d{2}-\d{2})"[^>]*id="([^"]+)"', html)
+        tooltips = dict(re.findall(r'for="([^"]+)"[^>]*>\s*([^\s<]+(?:\s+[^\s<]+)*)\s*</tool-tip>', html))
+
+        day_counts = []
+        for d_str, comp_id in tds:
+            tip = tooltips.get(comp_id, "")
+            cnt_match = re.search(r"^(\d+)\s+contribution", tip)
+            count = int(cnt_match.group(1)) if cnt_match else 0
+            day_counts.append((dt.date.fromisoformat(d_str), count))
+
+        if not day_counts:
+            m = re.search(r"([0-9,]+)\s+contributions", html)
+            total = int(m.group(1).replace(",", "")) if m else 0
+            return total, 0, 0
+
+        day_counts.sort()
+        total_contribs = sum(c for _, c in day_counts)
+
+        longest = run = 0
+        for _, c in day_counts:
+            run = run + 1 if c > 0 else 0
+            longest = max(longest, run)
+
+        current = 0
+        for d_obj, c in reversed(day_counts):
+            if c > 0:
+                current += 1
+            elif d_obj != day_counts[-1][0]:
+                break
+
+        return total_contribs, current, longest
+    except Exception as e:
+        print(f"  public calendar contributions scrape failed: {e}", file=sys.stderr)
         return None
-    if data.get("errors"):
-        print(f"  contributions unavailable: {data['errors'][0].get('message')}",
-              file=sys.stderr)
-        return None
-
-    cal = data["data"]["user"]["contributionsCollection"]["contributionCalendar"]
-    days = [(dt.date.fromisoformat(d["date"]), d["contributionCount"])
-            for w in cal["weeks"] for d in w["contributionDays"]]
-    days.sort()
-
-    longest = run = 0
-    for _, c in days:
-        run = run + 1 if c > 0 else 0
-        longest = max(longest, run)
-
-    # Today counts only if it already has activity; an empty today does not
-    # break a streak that was alive yesterday.
-    current = 0
-    for date, c in reversed(days):
-        if c > 0:
-            current += 1
-        elif date != days[-1][0]:
-            break
-    return cal["totalContributions"], current, longest
 
 
 # --------------------------------------------------------------------------- #
